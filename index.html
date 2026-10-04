@@ -23,6 +23,13 @@ canvas{position:absolute;inset:0;width:100%;height:100%}
 .heroTitle{font-size:clamp(48px,10vw,120px);line-height:.9;letter-spacing:-.07em;margin:0;font-weight:800}
 .heroTitle span{display:block;background:linear-gradient(120deg,#fff,#aebcff 42%,#6f7dff);-webkit-background-clip:text;color:transparent}
 .sub{color:#9da5ce;font-size:clamp(14px,2vw,18px);line-height:1.7;margin:24px auto;max-width:580px}
+.introLayout{width:min(1040px,94vw);display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,420px);align-items:center;gap:clamp(32px,7vw,90px)}
+.introCopy{min-width:0}
+.introCopy .sub{max-width:480px}
+.birthdayPhotoFrame{position:relative;width:100%;height:min(480px,66vh);min-height:340px;margin:0;border:1px solid rgba(118,128,255,.35);border-radius:24px;overflow:hidden;background:linear-gradient(135deg,rgba(24,30,77,.72),rgba(7,10,34,.72));box-shadow:0 25px 80px rgba(36,47,150,.3)}
+.birthdayPhoto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.birthdayPhotoPlaceholder{height:100%;display:grid;place-content:center;gap:8px;color:#858dbb;font:10px "DM Mono";letter-spacing:.12em;text-align:center}
+.birthdayPhotoPlaceholder span{color:#555f99;font-size:9px;letter-spacing:0;text-transform:none}
 .pill{display:inline-flex;gap:10px;align-items:center;border:1px solid #39406f;background:rgba(17,22,65,.55);backdrop-filter:blur(14px);padding:12px 18px;border-radius:999px;color:#dbe0ff;font-size:12px}
 .btn{border:1px solid #6570ff;background:linear-gradient(135deg,#2933a5,#626eff);color:white;padding:15px 22px;border-radius:14px;cursor:pointer;box-shadow:0 0 40px rgba(86,99,255,.22);transition:.25s;position:relative;overflow:hidden}
 .btn:hover{transform:translateY(-2px);box-shadow:0 0 55px rgba(86,99,255,.4)}
@@ -88,6 +95,12 @@ canvas{position:absolute;inset:0;width:100%;height:100%}
 .modalbox{width:min(520px,92vw);padding:28px;border-radius:24px;text-align:center}
 .modalbox h3{font-size:26px;margin:0 0 10px}.modalbox p{color:#aab1d8;line-height:1.7;font-size:14px}.x{float:right;background:none;border:0;color:#8189b4;font-size:22px;cursor:pointer}
 @media(max-width:650px){
+.introLayout{width:min(440px,92vw);grid-template-columns:1fr;gap:20px}
+.introCopy .kicker{margin-bottom:12px}
+.introCopy .heroTitle{font-size:clamp(46px,14vw,72px)}
+.introCopy .sub{margin:14px auto 18px}
+.birthdayPhotoFrame{width:min(100%,340px);height:min(230px,30vh);min-height:160px;margin:0 auto}
+.introCopy .btn{margin-top:18px}
 .memoryGrid{grid-template-columns:1fr 1fr}.card{height:190px}.card:nth-child(3){grid-column:1/-1;height:220px}
 .letter{padding:24px}.letter h2{font-size:28px}.letter p{font-size:13px}
 .core{width:120px;height:120px}.r1{width:240px;height:240px}.r2{width:340px;height:340px}.r3{width:430px;height:430px}
@@ -118,11 +131,17 @@ canvas{position:absolute;inset:0;width:100%;height:100%}
 </section>
 
 <section class="screen" id="s1">
-<div class="center">
+<div class="introLayout">
+<div class="introCopy center">
 <div class="mono kicker">A MESSAGE FOR ONE PERSON</div>
 <h1 class="heroTitle"><span>hey,</span><span>Chetna.</span></h1>
 <p class="sub">I could've just sent you a birthday message.<br>But honestly… that felt way too ordinary.</p>
 <button class="btn" onclick="next()">ENTER THE SURPRISE →</button>
+</div>
+<div class="birthdayPhotoFrame">
+<img class="birthdayPhoto" src="images/c1.jpeg" alt="Chetna's birthday photo" onload="this.nextElementSibling.hidden=true" onerror="this.hidden=true">
+<div class="birthdayPhotoPlaceholder"><div>PHOTO GOES HERE</div><span>Add your image as images/birthday-photo.jpg</span></div>
+</div>
 </div>
 </section>
 

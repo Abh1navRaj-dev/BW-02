@@ -7,7 +7,9 @@ CHETNA — SHOCK BIRTHDAY EXPERIENCE
    autoplay, click or tap the page once to start the soundtrack.
 3. The three memory cards use photos already in the images folder. Click a card
    to see its photo larger.
-4. Send the whole folder/ZIP, not only index.html.
+4. To add a photo to the opening message, put it in the images folder as
+   birthday-photo.jpg. The opening page already has a placeholder for it.
+5. Send the whole folder/ZIP, not only index.html.
 
 SECRET WORDS:
 chetna
