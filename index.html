@@ -320,7 +320,7 @@ terminalLines.forEach((line,i)=>setTimeout(()=>{t.innerHTML+=line+'<br>';},i*350
 }
 function unlock(){
 const v=document.querySelector('#code').value.trim().toLowerCase();
-if(['chetna','birthday','october','0510','5october'].includes(v)){unlocked=true;document.querySelector('#error').textContent='ACCESS GRANTED ✓';proceedTo(3)}
+if(['chetna','birthday','october','0510','5october','junnu'].includes(v)){unlocked=true;document.querySelector('#error').textContent='ACCESS GRANTED ✓';proceedTo(3)}
 else document.querySelector('#error').textContent='wrong word. hint: you already know who this is for.';
 }
 document.querySelector('#code').addEventListener('keydown',e=>{if(e.key==='Enter')unlock()});
