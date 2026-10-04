@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>For Chetna — October 5</title>
+<meta name="theme-color" content="#05071b">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap');
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#030511;color:#fff;font-family:Manrope,system-ui,sans-serif;overflow:hidden}
+button{font:inherit}
+#app{position:fixed;inset:0;overflow:hidden;background:
+radial-gradient(circle at 50% 45%,#11194d 0,#080b29 28%,#030511 68%,#010208 100%)}
+canvas{position:absolute;inset:0;width:100%;height:100%}
+#grain{pointer-events:none;opacity:.06;z-index:50;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E")}
+#vignette{position:absolute;inset:0;pointer-events:none;z-index:40;background:radial-gradient(ellipse at center,transparent 35%,rgba(0,0,0,.72) 100%)}
+.screen{position:absolute;inset:0;display:grid;place-items:center;opacity:0;pointer-events:none;transform:scale(1.04);transition:opacity .8s,transform 1s;z-index:10;padding:24px}
+.screen.active{opacity:1;pointer-events:auto;transform:scale(1)}
+.center{text-align:center;max-width:900px}
+.mono{font-family:"DM Mono",monospace;letter-spacing:.12em;text-transform:uppercase}
+.kicker{font-size:11px;color:#7780b8;margin-bottom:18px}
+.heroTitle{font-size:clamp(48px,10vw,120px);line-height:.9;letter-spacing:-.07em;margin:0;font-weight:800}
+.heroTitle span{display:block;background:linear-gradient(120deg,#fff,#aebcff 42%,#6f7dff);-webkit-background-clip:text;color:transparent}
+.sub{color:#9da5ce;font-size:clamp(14px,2vw,18px);line-height:1.7;margin:24px auto;max-width:580px}
+.pill{display:inline-flex;gap:10px;align-items:center;border:1px solid #39406f;background:rgba(17,22,65,.55);backdrop-filter:blur(14px);padding:12px 18px;border-radius:999px;color:#dbe0ff;font-size:12px}
+.btn{border:1px solid #6570ff;background:linear-gradient(135deg,#2933a5,#626eff);color:white;padding:15px 22px;border-radius:14px;cursor:pointer;box-shadow:0 0 40px rgba(86,99,255,.22);transition:.25s;position:relative;overflow:hidden}
+.btn:hover{transform:translateY(-2px);box-shadow:0 0 55px rgba(86,99,255,.4)}
+.btn:active{transform:scale(.98)}
+.btn.secondary{background:rgba(13,17,48,.6);border-color:#343b68;box-shadow:none}
+.progress{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:70;width:min(440px,70vw);height:2px;background:#202541;border-radius:9px}
+.progress i{display:block;height:100%;width:0;background:#8a94ff;box-shadow:0 0 15px #6875ff;transition:width .8s}
+.corner{position:fixed;z-index:70;font:10px "DM Mono";color:#515a91;letter-spacing:.15em}
+.tl{top:18px;left:20px}.tr{top:18px;right:20px}.bl{bottom:18px;left:20px}.br{bottom:18px;right:20px}
+#sound{position:fixed;right:18px;bottom:16px;z-index:80;border:1px solid #323963;background:#0a0e2a;color:#bfc6ff;border-radius:50%;width:42px;height:42px;cursor:pointer}
+#boot{z-index:100;background:#02030b;font-family:"DM Mono",monospace}
+.bootbox{width:min(680px,92vw);color:#8e9aff;font-size:12px;line-height:2;text-align:left}
+.bootline{opacity:0}.bootline.show{opacity:1}
+.bootbar{height:3px;background:#171b35;margin:15px 0}.bootbar i{display:block;width:0;height:100%;background:#6975ff;transition:width 1.5s}
+#cursor{position:fixed;width:8px;height:8px;border-radius:50%;background:#a9b1ff;box-shadow:0 0 22px 5px #6875ff;pointer-events:none;z-index:90;mix-blend-mode:screen;display:none}
+.glass{background:linear-gradient(135deg,rgba(24,30,77,.58),rgba(7,10,34,.42));border:1px solid rgba(118,128,255,.22);backdrop-filter:blur(22px);box-shadow:0 25px 100px rgba(0,0,0,.35)}
+/* command screen */
+.command{width:min(760px,94vw);padding:28px;border-radius:24px;text-align:left}
+.cmdhead{display:flex;justify-content:space-between;color:#6770a7;font:10px "DM Mono";margin-bottom:20px}
+.terminal{font:13px "DM Mono";line-height:2.1;color:#aeb6e8;min-height:150px}
+.terminal b{color:#eef0ff}.cursorBlink{animation:blink 1s infinite}
+@keyframes blink{50%{opacity:0}}
+.secret{margin-top:18px;display:flex;gap:10px}
+.secret input{flex:1;min-width:0;background:#050719;border:1px solid #292f59;color:#fff;border-radius:10px;padding:13px;font:12px "DM Mono";outline:none}
+.secret input:focus{border-color:#6d78ff}
+#error{color:#ff7897;font:10px "DM Mono";height:15px;margin-top:8px}
+/* orbit */
+.orbitWrap{position:relative;width:min(620px,88vw);height:min(620px,75vh);display:grid;place-items:center}
+.core{width:180px;height:180px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#bfc7ff,#5969ff 24%,#202b9c 52%,#070a35 72%);box-shadow:0 0 80px #4858ff,0 0 180px rgba(70,90,255,.28);animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08);box-shadow:0 0 110px #596aff,0 0 210px rgba(70,90,255,.32)}}
+.ring{position:absolute;border:1px solid rgba(126,138,255,.28);border-radius:50%;transform:rotateX(68deg) rotateZ(0deg);animation:spin 10s linear infinite}
+.r1{width:340px;height:340px}.r2{width:470px;height:470px;animation-duration:16s;animation-direction:reverse}.r3{width:600px;height:600px;animation-duration:25s}
+@keyframes spin{to{transform:rotateX(68deg) rotateZ(360deg)}}
+.orbitText{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:100%}
+/* memories */
+.memoryGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:min(920px,92vw);margin:25px auto}
+.card{height:260px;border-radius:20px;position:relative;overflow:hidden;cursor:pointer;transition:.35s}
+.card:hover{transform:translateY(-8px) rotateX(3deg)}
+.card img{width:100%;height:100%;object-fit:cover;display:block}
+.card:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 45%,rgba(0,0,0,.72))}
+.card .num{position:absolute;z-index:2;top:13px;left:14px;font:10px "DM Mono";color:#d4d8ff}
+.card .caption{position:absolute;z-index:2;left:16px;right:16px;bottom:14px;text-align:left;font-size:13px;font-weight:700;color:#fff}
+.memoryPreview{display:none;width:100%;max-height:56vh;object-fit:contain;border-radius:14px;margin:6px auto 18px}
+/* letter */
+.letterScene{width:min(820px,94vw);height:min(620px,82vh);position:relative}
+.envelope{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(620px,88vw);height:390px;cursor:pointer}
+.envback{position:absolute;inset:0;background:linear-gradient(145deg,#1b2466,#0b1037);border:1px solid #4650a0;border-radius:18px;box-shadow:0 35px 90px #0008}
+.flap{position:absolute;left:0;right:0;top:0;height:55%;clip-path:polygon(0 0,100% 0,50% 82%);background:linear-gradient(150deg,#303b91,#12194b);transform-origin:top;transition:1s;z-index:4}
+.envelope.open .flap{transform:rotateX(180deg);opacity:.35}
+.letter{position:absolute;z-index:3;left:5%;right:5%;top:5%;height:90%;padding:34px 34px;background:#f1f2ff;color:#151936;border-radius:10px;transform:translateY(80px);transition:1s;overflow:auto;text-align:left;box-shadow:0 15px 45px #0008}
+.envelope.open .letter{transform:translateY(-100px)}
+.letter h2{font-family:"Playfair Display",serif;font-weight:500;font-size:34px;margin:0 0 18px}
+.letter p{font:15px/1.9 Manrope;margin:0;color:#303553}
+.tap{position:absolute;z-index:8;bottom:-55px;left:50%;transform:translateX(-50%);white-space:nowrap;font:10px "DM Mono";color:#858dbb}
+/* final */
+.finalTitle{font-size:clamp(50px,12vw,145px);line-height:.82;letter-spacing:-.08em}
+.finalTitle em{font-family:"Playfair Display";font-weight:500;letter-spacing:-.04em}
+.count{font:11px "DM Mono";color:#777fae;margin-top:25px}
+.fire{position:absolute;inset:0;pointer-events:none}
+/* modals */
+.modal{position:fixed;inset:0;background:rgba(1,2,10,.72);backdrop-filter:blur(15px);z-index:200;display:none;place-items:center;padding:20px}
+.modal.show{display:grid}
+.modalbox{width:min(520px,92vw);padding:28px;border-radius:24px;text-align:center}
+.modalbox h3{font-size:26px;margin:0 0 10px}.modalbox p{color:#aab1d8;line-height:1.7;font-size:14px}.x{float:right;background:none;border:0;color:#8189b4;font-size:22px;cursor:pointer}
+@media(max-width:650px){
+.memoryGrid{grid-template-columns:1fr 1fr}.card{height:190px}.card:nth-child(3){grid-column:1/-1;height:220px}
+.letter{padding:24px}.letter h2{font-size:28px}.letter p{font-size:13px}
+.core{width:120px;height:120px}.r1{width:240px;height:240px}.r2{width:340px;height:340px}.r3{width:430px;height:430px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<canvas id="space"></canvas><canvas id="fire"></canvas>
+<div id="grain"></div><div id="vignette"></div>
+<div id="cursor"></div>
+<div class="progress"><i id="bar"></i></div>
+<div class="corner tl">CHETNA // PRIVATE EXPERIENCE</div><div class="corner tr">05.10</div>
+<div class="corner bl">MADE WITH TOO MANY FEELINGS</div><div class="corner br" id="sceneNo">01 / 07</div>
+<button id="sound" type="button" title="Play birthday soundtrack" aria-label="Play birthday soundtrack">♪</button>
+
+<section class="screen active" id="boot">
+<div class="bootbox">
+<div class="bootline">INITIALIZING SOMETHING IMPORTANT...</div>
+<div class="bootline">loading memories........ <b>OK</b></div>
+<div class="bootline">loading smiles.......... <b>OK</b></div>
+<div class="bootline">loading the person who matters <b>OK</b></div>
+<div class="bootline">checking birthday........ <b>OCTOBER 05</b></div>
+<div class="bootline">access level............. <b>ONLY CHETNA</b></div>
+<div class="bootbar"><i></i></div>
+<div class="bootline">WARNING: this website may cause excessive smiling.</div>
+</div>
+</section>
+
+<section class="screen" id="s1">
+<div class="center">
+<div class="mono kicker">A MESSAGE FOR ONE PERSON</div>
+<h1 class="heroTitle"><span>hey,</span><span>Chetna.</span></h1>
+<p class="sub">I could've just sent you a birthday message.<br>But honestly… that felt way too ordinary.</p>
+<button class="btn" onclick="next()">ENTER THE SURPRISE →</button>
+</div>
+</section>
+
+<section class="screen" id="s2">
+<div class="command glass">
+<div class="cmdhead"><span>PRIVATE_CHANNEL.exe</span><span>ENCRYPTED</span></div>
+<div class="terminal" id="terminal"></div>
+<div class="secret">
+<input id="code" maxlength="12" placeholder="enter the secret word…">
+<button class="btn" onclick="unlock()">UNLOCK</button>
+</div>
+<div id="error"></div>
+</div>
+</section>
+
+<section class="screen" id="s3">
+<div class="center orbitWrap">
+<div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
+<div class="core"></div>
+<div class="orbitText">
+<div class="mono kicker">ACCESS GRANTED</div>
+<h2 class="heroTitle" style="font-size:clamp(42px,8vw,90px)">05 / 10</h2>
+<p class="sub">Today isn't just a date.<br>It's the day someone very special entered the world.</p>
+<button class="btn" onclick="next()">KEEP GOING ↓</button>
+</div>
+</div>
+</section>
+
+<section class="screen" id="s4">
+<div class="center">
+<div class="mono kicker">ARCHIVE // MEMORIES</div>
+<h2 class="heroTitle" style="font-size:clamp(42px,7vw,78px)">little pieces<br><span>of you.</span></h2>
+<div class="memoryGrid">
+<div class="card glass" role="button" tabindex="0" onclick="memory(1)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();memory(1)}"><img src="images/WhatsApp%20Image%202026-10-02%20at%203.12.29%20PM.jpeg" alt="Chetna dressed up for a celebration"><div class="num">01</div><div class="caption">the special moments</div></div>
+<div class="card glass" role="button" tabindex="0" onclick="memory(2)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();memory(2)}"><img src="images/WhatsApp%20Image%202026-10-02%20at%203.12.30%20PM%20(1)_upright.jpeg" alt="A bright selfie of Chetna"><div class="num">02</div><div class="caption">that smile</div></div>
+<div class="card glass" role="button" tabindex="0" onclick="memory(3)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();memory(3)}"><img src="images/WhatsApp%20Image%202026-10-02%20at%203.12.35%20PM_upright.jpeg" alt="A relaxed candid moment with Chetna"><div class="num">03</div><div class="caption">you, exactly as you are</div></div>
+</div>
+<button class="btn secondary" onclick="next()">THERE'S MORE →</button>
+</div>
+</section>
+
+<section class="screen" id="s5">
+<div class="center">
+<div class="mono kicker">THINGS I NOTICE</div>
+<h2 class="heroTitle" style="font-size:clamp(42px,7vw,84px)">it's the<br><span>little things.</span></h2>
+<p class="sub" id="little">your smile. your little habits. the way you care.<br>the way you somehow make ordinary moments feel special.</p>
+<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:25px">
+<button class="pill" onclick="swap(0)">your smile</button><button class="pill" onclick="swap(1)">your habits</button><button class="pill" onclick="swap(2)">your heart</button><button class="pill" onclick="swap(3)">just you</button>
+</div>
+<button class="btn" style="margin-top:28px" onclick="next()">OPEN THE LETTER →</button>
+</div>
+</section>
+
+<section class="screen" id="s6">
+<div class="center letterScene">
+<div class="mono kicker">ONE LAST THING</div>
+<div class="envelope" id="env" onclick="openEnv()">
+<div class="envback"></div>
+<div class="letter">
+<h2>Dear Chetna,</h2>
+<p>If I had to describe you, I'd say you're someone who makes ordinary moments feel special without even trying. There's something about you that I can't really put into words… your smile, your little habits, the way you care, the way you talk, even the smallest things you do somehow stay with me.</p>
+<p style="margin-top:12px">You have this beautiful way of making my world feel a little warmer and happier just by being a part of it. And honestly, one of the loveliest things about you is that you don't even realise how special you are.</p>
+<p style="margin-top:12px">I feel genuinely grateful that I got to know you, understand you and have you in my life. You're someone I don't just love, but someone I deeply appreciate and feel lucky to have.</p>
+<p style="margin-top:12px">So if I ever had to put everything I feel for you into just a few words, I'd simply say — I'm grateful for you, I'm proud to have you in my life, and I'll always cherish the beautiful person you are.</p>
+<p style="margin-top:18px;font-family:'Playfair Display',serif;font-size:19px">Happy Birthday, Chetna. ♡</p>
+</div>
+<div class="flap"></div>
+<div class="tap">TAP THE ENVELOPE</div>
+</div>
+</div>
+</section>
+
+<section class="screen" id="s7">
+<div class="center">
+<div class="mono kicker">SYSTEM MESSAGE // FINAL</div>
+<h1 class="finalTitle">happy<br><em>birthday.</em></h1>
+<p class="sub">Chetna, make a wish.<br>And then press the button.</p>
+<button class="btn" onclick="celebrate()">MAKE THE WISH ✦</button>
+<div class="count" id="finalMsg"></div>
+</div>
+</section>
+</div>
+
+<div class="modal" id="modal" onclick="if(event.target===this)closeModal()">
+<div class="modalbox glass"><button class="x" onclick="closeModal()">×</button><img class="memoryPreview" id="mi" alt=""><h3 id="mt"></h3><p id="mp"></p><button class="btn secondary" onclick="closeModal()">close ♡</button></div>
+</div>
+
+<audio id="music" loop preload="none"></audio>
+
+<script>
+const screens=[...document.querySelectorAll('.screen')];
+let idx=0, unlocked=false;
+const bar=document.querySelector('#bar'), sceneNo=document.querySelector('#sceneNo');
+const music=document.querySelector('#music'), soundButton=document.querySelector('#sound');
+const currentMusicTrack={src:"music/Ed%20Sheeran%20-%20Perfect%20(Official%20Music%20Video).mp3",title:"Perfect"};
+let audioOn=true,autoplayBlocked=false;
+music.src=currentMusicTrack.src;
+music.load();
+music.defaultPlaybackRate=1.25;
+music.playbackRate=1.25;
+soundButton.textContent=audioOn?'♫':'♪';
+soundButton.title=`${audioOn?'Pause':'Play'} ${currentMusicTrack.title}`;
+soundButton.setAttribute('aria-label',soundButton.title);
+music.play().catch(error=>{
+if(error.name==='AbortError')return;
+if(error.name==='NotAllowedError'){
+audioOn=false;autoplayBlocked=true;soundButton.textContent='♪';
+soundButton.title=`Play ${currentMusicTrack.title}`;
+soundButton.setAttribute('aria-label',soundButton.title);
+return;
+}
+audioOn=false;soundButton.textContent='♪';
+soundButton.title=`Could not play ${currentMusicTrack.title}: ${error.message}`;
+soundButton.setAttribute('aria-label',soundButton.title);
+console.error(`Could not play ${currentMusicTrack.title}`,error);
+});
+document.addEventListener('pointerdown',event=>{
+if(audioOn||!autoplayBlocked||event.target===soundButton)return;
+audioOn=true;autoplayBlocked=false;
+soundButton.textContent='♫';
+soundButton.title=`Pause ${currentMusicTrack.title}`;
+soundButton.setAttribute('aria-label',soundButton.title);
+music.play().catch(error=>{
+if(error.name==='AbortError')return;
+audioOn=false;
+soundButton.textContent='♪';
+soundButton.title=`Could not play ${currentMusicTrack.title}: ${error.message}`;
+soundButton.setAttribute('aria-label',soundButton.title);
+console.error('Birthday soundtrack playback failed',error);
+});
+});
+document.addEventListener('keydown',()=>{
+if(audioOn||!autoplayBlocked)return;
+audioOn=true;autoplayBlocked=false;
+soundButton.textContent='♫';
+soundButton.title=`Pause ${currentMusicTrack.title}`;
+soundButton.setAttribute('aria-label',soundButton.title);
+music.play().catch(error=>{
+if(error.name==='AbortError')return;
+audioOn=false;
+soundButton.textContent='♪';
+soundButton.title=`Could not play ${currentMusicTrack.title}: ${error.message}`;
+soundButton.setAttribute('aria-label',soundButton.title);
+console.error('Birthday soundtrack playback failed',error);
+});
+});
+function show(n){
+screens[idx].classList.remove('active'); idx=n; screens[idx].classList.add('active');
+bar.style.width=((idx)/(screens.length-1))*100+'%'; sceneNo.textContent=String(idx+1).padStart(2,'0')+' / 07';
+if(idx===2)startOrbit(); if(idx===7)fireworks();
+}
+function next(){ if(idx<screens.length-1) show(idx+1); }
+setTimeout(()=>{
+document.querySelectorAll('.bootline').forEach((e,i)=>setTimeout(()=>e.classList.add('show'),500+i*500));
+setTimeout(()=>document.querySelector('.bootbar i').style.width='100%',2700);
+setTimeout(()=>show(1),4500);
+},400);
+
+const terminalLines=[
+"> establishing private connection...",
+"> recipient: CHETNA",
+"> occasion: BIRTHDAY",
+"> date: 05 OCTOBER",
+"> status: surprisingly important",
+"> one final authentication required."
+];
+setTimeout(()=>{if(document.querySelector('#s2').classList.contains('active')) typeTerminal()},5200);
+function typeTerminal(){
+const t=document.querySelector('#terminal');t.innerHTML='';
+terminalLines.forEach((line,i)=>setTimeout(()=>{t.innerHTML+=line+'<br>';},i*350));
+}
+function unlock(){
+const v=document.querySelector('#code').value.trim().toLowerCase();
+if(['chetna','birthday','october','0510','5october'].includes(v)){unlocked=true;document.querySelector('#error').textContent='ACCESS GRANTED ✓';setTimeout(()=>show(3),700)}
+else document.querySelector('#error').textContent='wrong word. hint: you already know who this is for.';
+}
+document.querySelector('#code').addEventListener('keydown',e=>{if(e.key==='Enter')unlock()});
+function memory(n){
+let titles=['That smile.','The moments.','You, exactly as you are.'];
+let text=['There are probably a thousand things I could say about your smile. I still wouldn’t explain what it does to my day.','Some moments become memories without us noticing. I’m glad I get to keep some of mine with you.','You don’t have to do anything extraordinary. Being you has always been enough to make things feel a little more special.'];
+const card=document.querySelectorAll('.memoryGrid .card')[n-1],preview=document.querySelector('#mi');
+preview.src=card.querySelector('img').src;preview.alt=card.querySelector('img').alt;preview.style.display='block';
+document.querySelector('#mt').textContent=titles[n-1];document.querySelector('#mp').textContent=text[n-1];document.querySelector('#modal').classList.add('show');
+}
+function closeModal(){document.querySelector('#modal').classList.remove('show');document.querySelector('#mi').style.display='none'}
+const little=[
+"your smile. your little habits. the way you care. the way you talk. somehow, the smallest things you do stay with me.",
+"the tiny things you probably don't even notice — the expressions, the random moments, the way you react to things. those are the things I remember.",
+"you have this beautiful way of making my world feel a little warmer and happier just by being a part of it.",
+"and honestly? one of the loveliest things about you is that you don't even realise how special you are."
+];
+function swap(i){document.querySelector('#little').style.opacity=0;setTimeout(()=>{document.querySelector('#little').innerHTML=little[i];document.querySelector('#little').style.opacity=1},180)}
+function openEnv(){document.querySelector('#env').classList.add('open');setTimeout(()=>document.querySelector('.tap').textContent='keep reading ♡',700)}
+soundButton.onclick=async()=>{
+autoplayBlocked=false;
+try{
+if(!audioOn){await music.play();audioOn=true;soundButton.textContent='♫';soundButton.title=`Pause ${currentMusicTrack.title}`;soundButton.setAttribute('aria-label',soundButton.title)}
+else{music.pause();audioOn=false;soundButton.textContent='♪';soundButton.title=`Play ${currentMusicTrack.title}`;soundButton.setAttribute('aria-label',soundButton.title)}
+}catch(error){
+soundButton.title=`Could not play ${currentMusicTrack.title}: ${error.message}`;
+soundButton.setAttribute('aria-label',soundButton.title);
+console.error('Birthday soundtrack playback failed',error);
+alert(`Could not play the birthday soundtrack: ${error.message}`);
+}
+};
+function celebrate(){
+document.querySelector('#finalMsg').textContent='WISH SENT. ♡';
+fireworks();
+for(let i=0;i<4;i++)setTimeout(()=>burst(Math.random()*innerWidth,Math.random()*innerHeight*.65),i*450);
+}
+const space=document.querySelector('#space'),ctx=space.getContext('2d'),fire=document.querySelector('#fire'),fx=fire.getContext('2d');
+let stars=[];
+function resize(){space.width=innerWidth*devicePixelRatio;space.height=innerHeight*devicePixelRatio;fire.width=innerWidth*devicePixelRatio;fire.height=innerHeight*devicePixelRatio;ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);fx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0)}
+function initStars(){stars=Array.from({length:Math.min(240,innerWidth/4)},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*1.5+.2,a:Math.random(),s:Math.random()*.4+.1}))}
+function starLoop(){ctx.clearRect(0,0,innerWidth,innerHeight);stars.forEach(s=>{s.y-=s.s;if(s.y<0)s.y=innerHeight;s.a+=.01;ctx.globalAlpha=.25+.3*Math.sin(s.a);ctx.fillStyle='#aab4ff';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill()});requestAnimationFrame(starLoop)}
+addEventListener('resize',()=>{resize();initStars()});resize();initStars();starLoop();
+let particles=[];
+function burst(x,y){for(let i=0;i<70;i++){let a=Math.random()*Math.PI*2,sp=Math.random()*7+2;particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,r:Math.random()*2+1})}}
+function fireworks(){
+fire.style.opacity=1;burst(innerWidth*.25,innerHeight*.3);burst(innerWidth*.75,innerHeight*.25);burst(innerWidth*.5,innerHeight*.18);
+}
+function fxLoop(){fx.clearRect(0,0,innerWidth,innerHeight);particles.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.045;p.life-=.012;fx.globalAlpha=Math.max(0,p.life);fx.fillStyle='#aab5ff';fx.beginPath();fx.arc(p.x,p.y,p.r,0,Math.PI*2);fx.fill()});particles=particles.filter(p=>p.life>0);requestAnimationFrame(fxLoop)}fxLoop();
+document.addEventListener('mousemove',e=>{const c=document.querySelector('#cursor');c.style.display='block';c.style.left=e.clientX-4+'px';c.style.top=e.clientY-4+'px'});
+function startOrbit(){document.querySelector('.core').animate([{filter:'brightness(1)'},{filter:'brightness(1.5)'},{filter:'brightness(1)'}],{duration:1800,iterations:2})}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'&&idx<7)next();if(e.key==='Escape')closeModal()});
+</script>
+</body>
+</html>

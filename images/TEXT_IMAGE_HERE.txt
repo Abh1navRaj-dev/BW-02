@@ -1,0 +1,8 @@
+Put your photos in this folder.
+Then replace the placeholder card content in index.html with:
+<img src="images/your-photo.jpg" alt="Chetna">
+
+Example filenames:
+chetna1.jpg
+chetna2.jpg
+chetna3.jpg
