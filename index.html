@@ -214,7 +214,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%}
 
 <script>
 const screens=[...document.querySelectorAll('.screen')];
-let idx=0, unlocked=false;
+let idx=0, unlocked=false, navigationPending=false;
 const bar=document.querySelector('#bar'), sceneNo=document.querySelector('#sceneNo');
 const music=document.querySelector('#music'), soundButton=document.querySelector('#sound');
 const currentMusicTrack={src:"music/Ed%20Sheeran%20-%20Perfect%20(Official%20Music%20Video).mp3",title:"Perfect"};
@@ -274,7 +274,12 @@ screens[idx].classList.remove('active'); idx=n; screens[idx].classList.add('acti
 bar.style.width=((idx)/(screens.length-1))*100+'%'; sceneNo.textContent=String(idx+1).padStart(2,'0')+' / 07';
 if(idx===2)startOrbit(); if(idx===7)fireworks();
 }
-function next(){ if(idx<screens.length-1) show(idx+1); }
+function proceedTo(n){
+if(navigationPending)return;
+navigationPending=true;
+setTimeout(()=>{show(n);navigationPending=false},2000);
+}
+function next(){ if(idx<screens.length-1) proceedTo(idx+1); }
 setTimeout(()=>{
 document.querySelectorAll('.bootline').forEach((e,i)=>setTimeout(()=>e.classList.add('show'),500+i*500));
 setTimeout(()=>document.querySelector('.bootbar i').style.width='100%',2700);
@@ -296,7 +301,7 @@ terminalLines.forEach((line,i)=>setTimeout(()=>{t.innerHTML+=line+'<br>';},i*350
 }
 function unlock(){
 const v=document.querySelector('#code').value.trim().toLowerCase();
-if(['chetna','birthday','october','0510','5october'].includes(v)){unlocked=true;document.querySelector('#error').textContent='ACCESS GRANTED ✓';setTimeout(()=>show(3),700)}
+if(['chetna','birthday','october','0510','5october'].includes(v)){unlocked=true;document.querySelector('#error').textContent='ACCESS GRANTED ✓';proceedTo(3)}
 else document.querySelector('#error').textContent='wrong word. hint: you already know who this is for.';
 }
 document.querySelector('#code').addEventListener('keydown',e=>{if(e.key==='Enter')unlock()});
